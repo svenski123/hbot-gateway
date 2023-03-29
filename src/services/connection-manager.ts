@@ -13,6 +13,7 @@ import { PancakeSwap } from '../connectors/pancakeswap/pancakeswap';
 import { Uniswap } from '../connectors/uniswap/uniswap';
 import { UniswapLP } from '../connectors/uniswap/uniswap.lp';
 import { VVSConnector } from '../connectors/vvs/vvs';
+import { Serum, Serumish } from '../connectors/serum/serum';
 import {
   Ethereumish,
   Nearish,
@@ -60,7 +61,7 @@ export async function getChain<T>(
   return chainInstance as Chain<T>;
 }
 
-type ConnectorUnion = Uniswapish | UniswapLPish | Perpish | RefAMMish;
+type ConnectorUnion = Uniswapish | UniswapLPish | Perpish | RefAMMish | Serumish;
 
 export type Connector<T> = T extends Uniswapish
   ? Uniswapish
@@ -70,6 +71,8 @@ export type Connector<T> = T extends Uniswapish
   ? Perpish
   : T extends RefAMMish
   ? RefAMMish
+  : T extends Serumish
+  ? Serumish
   : never;
 
 export async function getConnector<T>(
@@ -114,6 +117,8 @@ export async function getConnector<T>(
     connectorInstance = PancakeSwap.getInstance(chain, network);
   } else if (connector === 'sushiswap') {
     connectorInstance = Sushiswap.getInstance(chain, network);
+  } else if (connector === 'serum') {
+    connectorInstance = Serum.getInstance(chain, network);
   } else {
     throw new Error('unsupported chain or connector');
   }
